@@ -3,11 +3,14 @@ package domain
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"sync"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+var ErrDuplicateAccount = errors.New("account already exists")
 
 type Account struct {
 	ID        string
@@ -49,4 +52,3 @@ func (a *Account) AddBalance(amount float64) {
 	a.UpdatedAt = time.Now()
 	a.mu.Unlock()
 }
-
