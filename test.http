@@ -1,1 +1,24 @@
-@baseUrl =  
+@baseUrl =  http://localhost:8097
+
+### Criar conta
+# @name createaccount
+POST {{baseUrl}}/accounts
+Content-Type: application/json
+
+{
+    "name": "Toni",
+    "email": "toni@gmail.com"
+}
+
+### Buscar conta
+GET {{baseUrl}}/accounts
+X-API-Key: {{createaccount.response.body.api_key}}
+
+
+
+
+
+
+
+
+

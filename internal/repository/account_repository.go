@@ -17,7 +17,7 @@ func NewAccountRepository(db *sql.DB) *AccountRepository {
 }
 
 func (r *AccountRepository) Save(account *domain.Account) error {
-	stmt, err := r.db.Prepare("INSERT INTO accounts (id, name, email, api_key, balance, created_at, updated_at) VALUES ($1, $2, $3, $3, $4, $6, $7)")
+	stmt, err := r.db.Prepare("INSERT INTO accounts (id, name, email, api_key, balance, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)")
 	if err != nil {
 		return err
 	}
@@ -50,10 +50,15 @@ func (r *AccountRepository) FindByApiKey(apiKey string) (*domain.Account, error)
 		&account.Balance,
 		&CreatedAt,
 		&updated_at)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
 
+	account.CreatedAt = CreatedAt
+	account.UpdatedAt = updated_at
 	return &account, nil
 }
 
