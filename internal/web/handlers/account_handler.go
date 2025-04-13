@@ -4,15 +4,16 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/devfullcycle/imersao22/go-gateway/internal/domain"
 	"github.com/devfullcycle/imersao22/go-gateway/internal/dto"
 	"github.com/devfullcycle/imersao22/go-gateway/internal/service"
 )
 
 type AccountHandler struct {
-	service service.AccountService
+	service *service.AccountService
 }
 
-func NewAccountHandler(service service.AccountService) *AccountHandler {
+func NewAccountHandler(service *service.AccountService) *AccountHandler {
 	return &AccountHandler{service: service}
 }
 
@@ -25,7 +26,12 @@ func (h *AccountHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	account, err := h.service.CreateAccount(&input)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		switch err {
+		case domain.ErrDuplicateAccount:
+			http.Error(w, err.Error(), http.StatusConflict)
+		default:
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 

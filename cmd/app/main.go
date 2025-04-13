@@ -46,11 +46,13 @@ func main() {
 	log.Println("Successfully connected to database")
 
 	accountRepository := repository.NewAccountRepository(db)
-	accountService := service.NewAccountService(*accountRepository)
+	accountService := service.NewAccountService(accountRepository)
+	invoiceRepository := repository.NewInvoiceRepository(db)
+	invoiceService := service.NewInvoiceService(invoiceRepository, accountService)
 
 	port := getEnv("HTTP_PORT", "8080")
 	log.Printf("Starting server on port %s", port)
-	server := server.NewServer(port, *accountService)
+	server := server.NewServer(port, accountService, invoiceService)
 	if err := server.Start(); err != nil {
 		log.Fatal("Error starting server: ", err)
 	}

@@ -50,9 +50,6 @@ func (r *AccountRepository) FindByApiKey(apiKey string) (*domain.Account, error)
 		&account.Balance,
 		&CreatedAt,
 		&updated_at)
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
 	if err != nil {
 		return nil, err
 	}

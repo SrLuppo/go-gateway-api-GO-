@@ -6,18 +6,54 @@ POST {{baseUrl}}/accounts
 Content-Type: application/json
 
 {
-    "name": "Toni",
-    "email": "toni@gmail.com"
+    "name": "test77e",
+    "email": "77@gmail.com"
 }
 
 ### Buscar conta
 GET {{baseUrl}}/accounts
-X-API-Key: {{createaccount.response.body.api_key}}
+X-API-Key: {{createaccount.response.body.$.api_key}}
 
+### Criar fatura
+# @name createinvoice
+POST {{baseUrl}}/invoices
+Content-Type: application/json
+X-API-Key: {{createaccount.response.body.$.api_key}}
 
+{    
+    "amount": 1000,
+    "description": "Teste",
+    "payment_type": "credit_card",
+    "card_number": "1234567890123456", 
+    "cvv": "123",
+    "expiry_month": "12",
+    "expiry_year": "2025",
+    "cardholder_name": "Toni"
+}
 
+### Obter uma fatura específica
+GET {{baseUrl}}/invoices/{{createinvoice.response.body.$.id}}
+X-API-Key: {{createaccount.response.body.$.api_key}}
 
+### Obter todas as faturas
+GET {{baseUrl}}/invoices
+X-API-Key: {{createaccount.response.body.$.api_key}}      
 
+### Criar fatura com valor maior que o permitido
+POST {{baseUrl}}/invoices
+Content-Type: application/json
+X-API-Key: {{createaccount.response.body.$.api_key}}
+
+{    
+    "amount": 15000,
+    "description": "Teste",
+    "payment_type": "credit_card",
+    "card_number": "1234567890123456", 
+    "cvv": "123",
+    "expiry_month": "12",
+    "expiry_year": "2025",
+    "cardholder_name": "Toni"
+}
 
 
 

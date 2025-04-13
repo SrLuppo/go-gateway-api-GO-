@@ -1,16 +1,18 @@
 package service
 
 import (
+	"database/sql"
+
 	"github.com/devfullcycle/imersao22/go-gateway/internal/domain"
 	"github.com/devfullcycle/imersao22/go-gateway/internal/dto"
 	"github.com/devfullcycle/imersao22/go-gateway/internal/repository"
 )
 
 type AccountService struct {
-	repository repository.AccountRepository
+	repository *repository.AccountRepository
 }
 
-func NewAccountService(repository repository.AccountRepository) *AccountService {
+func NewAccountService(repository *repository.AccountRepository) *AccountService {
 	return &AccountService{repository: repository}
 }
 
@@ -18,7 +20,7 @@ func (s *AccountService) CreateAccount(input *dto.CreateAccountRequest) (*dto.Ac
 	account := dto.ToAccount(input)
 
 	existingAccount, err := s.repository.FindByApiKey(account.ApiKey)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 
@@ -32,7 +34,6 @@ func (s *AccountService) CreateAccount(input *dto.CreateAccountRequest) (*dto.Ac
 	}
 	return dto.FromAccount(account), nil
 }
-
 
 func (s *AccountService) UpdateBalance(apiKey string, amount float64) (*dto.AccountOutput, error) {
 	account, err := s.repository.FindByApiKey(apiKey)
@@ -56,7 +57,7 @@ func (s *AccountService) FindAccountByApiKey(apiKey string) (*dto.AccountOutput,
 		return nil, err
 	}
 	return dto.FromAccount(account), nil
-}	
+}
 
 func (s *AccountService) FindAccountById(id string) (*dto.AccountOutput, error) {
 	account, err := s.repository.FindByID(id)
@@ -64,5 +65,4 @@ func (s *AccountService) FindAccountById(id string) (*dto.AccountOutput, error) 
 		return nil, err
 	}
 	return dto.FromAccount(account), nil
-}	
-
+}
